@@ -47,9 +47,16 @@ const TraitStep = ({ onTraitChosen }: { onTraitChosen: () => void }) => {
         fullWidth
         sx={{ marginTop: 2 }}
       >
-        Increase Trait (from Archetype Bonus)
+        {/* Find the key with value 1 and display the key (trait name) */}
+        {selectedCharacter?.archetypeTraitModifiers?.[0] &&
+        Object.entries(selectedCharacter.archetypeTraitModifiers[0]).find(
+          ([_, value]) => value === 1
+        )
+          ? Object.entries(selectedCharacter.archetypeTraitModifiers[0]).find(
+              ([_, value]) => value === 1
+            )?.[0] // Display the key (trait name)
+          : "Increase Trait (from Archetype Bonus)"}
       </Button>
-
       {/* Trait Increase Modal */}
       {selectedCharacter?.archetypes && (
         <TraitIncreaseModal
@@ -59,6 +66,47 @@ const TraitStep = ({ onTraitChosen }: { onTraitChosen: () => void }) => {
           rank={0}
         />
       )}
+    </div>
+  );
+};
+
+// New Step for selecting Style
+const StyleStep = ({ onStyleChosen }: { onStyleChosen: () => void }) => {
+  const { selectedCharacter, updateCharacter } = useCharacterContext();
+  const [openStyleModal, setOpenStyleModal] = useState(false);
+
+  const handleOpenStyleModal = () => setOpenStyleModal(true);
+  const handleCloseStyleModal = () => setOpenStyleModal(false);
+
+  const handleStyleSelect = (style: any) => {
+    // Update the selected style in the character
+    const updatedCharacter = { ...selectedCharacter };
+    updatedCharacter. = style; // Assuming you have this property
+    updateCharacter(updatedCharacter);
+    onStyleChosen(); // Move to the next step (optional)
+  };
+
+  if (selectedCharacter?.archetypes[0].type !== "martial") {
+    return null; // If not a martial type or no styles, return null (skip this step)
+  }
+
+  return (
+    <div>
+      <Button
+        variant="contained"
+        onClick={handleOpenStyleModal}
+        fullWidth
+        sx={{ marginTop: 2 }}
+      >
+        Choose Style
+      </Button>
+
+      <StyleSelectionModal
+        open={openStyleModal}
+        onClose={handleCloseStyleModal}
+        styles={selectedCharacter.archetypes[0].styles}
+        onStyleSelect={handleStyleSelect}
+      />
     </div>
   );
 };
@@ -73,12 +121,8 @@ const steps = [
     component: TraitStep,
   },
   {
-    name: "Step 3: Assign Knacks",
-    component: () => (
-      <Box>
-        <Typography color="text.primary">Step 3 Content</Typography>
-      </Box>
-    ),
+    name: "Step 3: Choose Style",
+    component: StyleStep, // Add StyleStep here
   },
 ];
 
