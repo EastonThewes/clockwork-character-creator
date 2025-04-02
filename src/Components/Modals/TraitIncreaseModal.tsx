@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -17,32 +17,45 @@ import { useCharacterContext } from "../../Context/CharacterContext";
 interface TraitIncreaseModalProps {
   open: boolean;
   onClose: () => void;
-  archetype: Archetype;
   rank: number;
 }
 
 const TraitIncreaseModal: React.FC<TraitIncreaseModalProps> = ({
   open,
   onClose,
-  archetype,
   rank,
 }) => {
   const { selectedCharacter, updateCharacter } = useCharacterContext();
   const [selectedTrait, setSelectedTrait] = useState<string>("");
+
+  // Find the archetype with rank === 0
+  const archetypeWithRankZero = selectedCharacter?.archetypes?.find(
+    (archetype) => archetype.rank === rank
+  );
+
+  // Set available traits from the archetype with rank === 0
+  const availableTraits = archetypeWithRankZero?.archetype?.bonusTrait || [];
+
+  // Set the first trait as the default value if available
+  useEffect(() => {
+    if (availableTraits.length > 0 && !selectedTrait) {
+      setSelectedTrait(availableTraits[0]);
+    }
+  }, [availableTraits, selectedTrait]);
 
   const handleTraitChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedTrait(event.target.value as string);
   };
 
   const handleSubmit = () => {
-    if (selectedCharacter && selectedTrait) {
-      // Increase the selected trait by 1
+    if (selectedCharacter && selectedTrait && archetypeWithRankZero) {
+      // Update the archetype's bonusTrait
       const updatedCharacter = { ...selectedCharacter };
 
-      const modifier = new TraitModifiers();
-      modifier[selectedTrait.toLowerCase()] = 1;
+      // Set the selected trait to the bonusTrait
+      selectedCharacter.bonusTrait = selectedTrait;
 
-      updatedCharacter.archetypeTraitModifiers[Math.floor(rank / 2)] = modifier;
+      // Update the character after modifying the archetype
       updateCharacter(updatedCharacter);
       onClose(); // Close the modal after updating
     }
@@ -110,7 +123,7 @@ const TraitIncreaseModal: React.FC<TraitIncreaseModalProps> = ({
                     },
                   }}
                 >
-                  {archetype?.bonusTrait.map((trait) => (
+                  {availableTraits.map((trait) => (
                     <MenuItem key={trait} value={trait}>
                       {trait}
                     </MenuItem>

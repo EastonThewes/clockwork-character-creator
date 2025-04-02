@@ -25,6 +25,7 @@ import {
   SorcerousArchetype,
 } from "../../Models/ArchetypeModel";
 import { useCharacterContext } from "../../Context/CharacterContext";
+import { ArcheTypeLevels, CharacterArchetype } from "../../Models/Character";
 
 interface ArchetypeModalProps {
   open: boolean;
@@ -40,17 +41,37 @@ const ArchetypeModal: React.FC<ArchetypeModalProps> = ({
   const [selectedArchetype, setSelectedArchetype] = useState<Archetype | null>(
     null
   );
+
   const { selectedCharacter, updateCharacter } = useCharacterContext();
 
   const handleSelectArchetype = () => {
     if (selectedCharacter && selectedArchetype) {
-      const archetypeIndex = Math.floor(rank / 2); // Get the index based on rank
-      if (archetypeIndex >= 0) {
-        selectedCharacter.archetypes[archetypeIndex] = selectedArchetype;
-        updateCharacter(selectedCharacter);
+      // Create the new archetype object
+      const newArchetype: CharacterArchetype = {
+        archetype: selectedArchetype, // selected archetype object
+        selectedStyle: "", // placeholder value
+        level: ArcheTypeLevels.initiate, // default value for level
+        rank: rank, // the current rank, or the level of the character
+        type: selectedArchetype.type, // the type of the selected archetype
+      };
+
+      // Check if an archetype with the same rank already exists
+      const existingArchetypeIndex = selectedCharacter.archetypes.findIndex(
+        (archetype) => archetype.rank === rank
+      );
+
+      if (existingArchetypeIndex !== -1) {
+        // Replace the existing archetype if one with the same rank is found
+        selectedCharacter.archetypes[existingArchetypeIndex] = newArchetype;
       } else {
-        console.error("Invalid index for archetypes array.");
+        // Otherwise, push the new archetype into the array
+        selectedCharacter.archetypes.push(newArchetype);
       }
+
+      // Update the character after modification
+      updateCharacter(selectedCharacter);
+
+      // Close the selection dialog or window
       onClose();
     }
   };

@@ -3,18 +3,14 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 import { useCharacterContext } from "../Context/CharacterContext"; // Import the context
 import ArchetypeModal from "./Modals/ArchetypeModal";
 import { Character, Traits } from "../Models/Character";
-import { Archetype } from "../Models/ArchetypeModel";
 import TraitIncreaseModal from "./Modals/TraitIncreaseModal"; // Import the TraitIncreaseModal
+import StyleSelectionModal from "./Modals/StyleSelectionModal";
 
 interface CharacterBuilderStepsProps {
   character: Character; // Accepting a character as a prop
 }
 
-const FirstStep = ({
-  onArchetypeChosen,
-}: {
-  onArchetypeChosen: () => void;
-}) => {
+const FirstStep = () => {
   const [openModal, setOpenModal] = useState(false);
   const { selectedCharacter } = useCharacterContext();
 
@@ -24,7 +20,13 @@ const FirstStep = ({
   return (
     <div>
       <Button variant="contained" onClick={handleOpen} fullWidth>
-        {selectedCharacter?.archetypes[0]?.name || "Choose Archetype"}
+        {selectedCharacter?.archetypes?.some(
+          (archetype) => archetype.rank === 0
+        )
+          ? selectedCharacter.archetypes.find(
+              (archetype) => archetype.rank === 0
+            )?.archetype.name
+          : "Choose Archetype"}
       </Button>
 
       <ArchetypeModal open={openModal} onClose={handleClose} rank={0} />
@@ -32,7 +34,7 @@ const FirstStep = ({
   );
 };
 
-const TraitStep = ({ onTraitChosen }: { onTraitChosen: () => void }) => {
+const TraitStep = () => {
   const [openTraitModal, setOpenTraitModal] = useState(false);
   const { selectedCharacter } = useCharacterContext();
 
@@ -47,14 +49,8 @@ const TraitStep = ({ onTraitChosen }: { onTraitChosen: () => void }) => {
         fullWidth
         sx={{ marginTop: 2 }}
       >
-        {/* Find the key with value 1 and display the key (trait name) */}
-        {selectedCharacter?.archetypeTraitModifiers?.[0] &&
-        Object.entries(selectedCharacter.archetypeTraitModifiers[0]).find(
-          ([_, value]) => value === 1
-        )
-          ? Object.entries(selectedCharacter.archetypeTraitModifiers[0]).find(
-              ([_, value]) => value === 1
-            )?.[0] // Display the key (trait name)
+        {selectedCharacter?.bonusTrait
+          ? selectedCharacter.bonusTrait
           : "Increase Trait (from Archetype Bonus)"}
       </Button>
       {/* Trait Increase Modal */}
@@ -62,7 +58,6 @@ const TraitStep = ({ onTraitChosen }: { onTraitChosen: () => void }) => {
         <TraitIncreaseModal
           open={openTraitModal}
           onClose={handleCloseTraitModal}
-          archetype={selectedCharacter.archetypes[0]} // Assuming we are using the first archetype
           rank={0}
         />
       )}
@@ -71,23 +66,20 @@ const TraitStep = ({ onTraitChosen }: { onTraitChosen: () => void }) => {
 };
 
 // New Step for selecting Style
-const StyleStep = ({ onStyleChosen }: { onStyleChosen: () => void }) => {
-  const { selectedCharacter, updateCharacter } = useCharacterContext();
+const StyleStep = () => {
+  const { selectedCharacter } = useCharacterContext();
   const [openStyleModal, setOpenStyleModal] = useState(false);
 
   const handleOpenStyleModal = () => setOpenStyleModal(true);
   const handleCloseStyleModal = () => setOpenStyleModal(false);
 
-  const handleStyleSelect = (style: any) => {
-    // Update the selected style in the character
-    const updatedCharacter = { ...selectedCharacter };
-    updatedCharacter. = style; // Assuming you have this property
-    updateCharacter(updatedCharacter);
-    onStyleChosen(); // Move to the next step (optional)
-  };
+  let initialArchetype = selectedCharacter?.archetypes?.find(
+    (archetype) => archetype.rank === 0
+  );
 
-  if (selectedCharacter?.archetypes[0].type !== "martial") {
-    return null; // If not a martial type or no styles, return null (skip this step)
+  // Check if the archetype type is 'martial'
+  if (initialArchetype?.type !== "martial") {
+    return null; // Don't render the StyleStep if it's not 'martial'
   }
 
   return (
@@ -104,8 +96,7 @@ const StyleStep = ({ onStyleChosen }: { onStyleChosen: () => void }) => {
       <StyleSelectionModal
         open={openStyleModal}
         onClose={handleCloseStyleModal}
-        styles={selectedCharacter.archetypes[0].styles}
-        onStyleSelect={handleStyleSelect}
+        rank={0}
       />
     </div>
   );
@@ -117,7 +108,7 @@ const steps = [
     component: FirstStep,
   },
   {
-    name: "Step 2: Choose Traits",
+    name: "Step 2: Choose Bonus Trait",
     component: TraitStep,
   },
   {
@@ -126,9 +117,7 @@ const steps = [
   },
 ];
 
-const CharacterBuilderSteps: React.FC<CharacterBuilderStepsProps> = ({
-  character,
-}) => {
+const CharacterBuilderSteps: React.FC<CharacterBuilderStepsProps> = () => {
   return (
     <Grid container spacing={2} sx={{ padding: 1 }}>
       <Grid size={12}>
@@ -155,10 +144,7 @@ const CharacterBuilderSteps: React.FC<CharacterBuilderStepsProps> = ({
               <Typography variant="h6" color="text.primary">
                 {step.name}
               </Typography>
-              <step.component
-                onArchetypeChosen={() => {}}
-                onTraitChosen={() => {}}
-              />
+              <step.component />
             </Box>
           ))}
         </Box>

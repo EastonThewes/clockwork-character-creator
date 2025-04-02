@@ -6,7 +6,7 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Menu,
+  MenuItem,
   Grid,
   Box,
 } from "@mui/material";
@@ -16,13 +16,13 @@ import { useCharacterContext } from "../../Context/CharacterContext";
 interface StyleSelectionModalProps {
   open: boolean;
   onClose: () => void;
-  archetype: MartialArchetype; // Archetype contains the styles
+  rank: number; // Pass the rank to determine which archetype to pull from
 }
 
 const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
   open,
   onClose,
-  archetype,
+  rank,
 }) => {
   const { selectedCharacter, updateCharacter } = useCharacterContext();
   const [selectedStyle, setSelectedStyle] = useState<string>("");
@@ -36,18 +36,36 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
       // Update the character's selected style
       const updatedCharacter = { ...selectedCharacter };
 
-      updatedCharacter.selectedStyle = selectedStyle;
+      const archetypeWithRankZero = selectedCharacter?.archetypes?.find(
+        (archetype) => archetype.rank === rank
+      );
+
+      if (archetypeWithRankZero)
+        archetypeWithRankZero.selectedStyle = selectedStyle;
       updateCharacter(updatedCharacter);
       onClose(); // Close the modal after updating
     }
   };
+
+  // Find the archetype with the specific rank
+  const archetype = selectedCharacter?.archetypes?.find(
+    (archetype) => archetype.rank === rank
+  );
+
+  // Ensure that the archetype is of type MartialArchetype
+  const martialArchetype = archetype?.archetype as MartialArchetype | undefined;
+
+  // Ensure that martialArchetype is defined and contains the styles for the given rank
+  const styles = martialArchetype
+    ? martialArchetype.styles // This assumes styles is an array of levels
+    : [];
 
   return (
     <Modal open={open} onClose={onClose}>
       <Grid
         container
         justifyContent="center"
-        aligns="center"
+        alignItems="center"
         sx={{
           height: "100vh",
           display: "flex",
@@ -56,11 +74,10 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
         {/* Modal Container */}
         <Grid
           container
-          size={12}
           sx={{
             backgroundColor: "white",
             borderRadius: 2,
-            bosizehadow: 24,
+            boxShadow: 24,
             padding: 2,
             maxHeight: "80vh",
             overflowY: "auto", // Allows scrolling if the content is too long
@@ -106,10 +123,10 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
                   },
                 }}
               >
-                {archetype?.styles.map((style) => (
-                  <Menu key={style.name} value={style.name}>
+                {styles.map((style) => (
+                  <MenuItem key={style.name} value={style.name}>
                     {style.name}
-                  </Menu>
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -121,9 +138,8 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
               <Box>
                 <Typography variant="body2" color="text.secondary">
                   {
-                    archetype?.styles.find(
-                      (style) => style.name === selectedStyle
-                    )?.description
+                    styles.find((style) => style.name === selectedStyle)
+                      ?.description
                   }
                 </Typography>
               </Box>

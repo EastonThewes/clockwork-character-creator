@@ -82,20 +82,37 @@ export class Manuever {
   reactionCost: string = "";
 }
 
+export enum ArcheTypeLevels {
+  initiate,
+  adept,
+  master,
+}
+export interface CharacterArchetype {
+  archetype: Archetype; // The archetype information
+  selectedStyle: string; // The selected style index
+  level: ArcheTypeLevels; // This is what level this archetype is at when it was chosen
+  rank: number; // This is the rank at which this archetype was chosen
+  type: string; // If this archetype was given by a rank or an advantage
+}
+
+export interface TraitBonuses {}
+
 export class Character {
-  name: string = "";
-  rank: number = 0;
-  archetypes: Archetype[] = [];
-  manuevers: Manuever[] = [];
-  traits: Traits = new Traits();
-  archetypeTraitModifiers: TraitModifiers[] = [];
-  knacks: Knacks = new Knacks();
-  experience: Experience = new Experience();
-  defense: Defense = new Defense();
-  health: Health = new Health();
-  skills: Skill[] = [];
-  advantages: Advantage[] = [];
-  endeavorDice: number = 1;
-  aspect: Aspect = new Aspect();
-  weapons: Weapon[] = [];
+  name: string = "New Character"; // The name of the character
+  rank: number = 0; // The current rank of the character
+
+  archetypes: CharacterArchetype[] = []; // This is the list of archetypes and how they were chosen
+  bonusTrait: string = ""; // This is the chosen bonus trait
+
+  // traits: Traits = new Traits();                        // The list of traits
+  // archetypeTraitModifiers: TraitModifiers[] = [];
+  // knacks: Knacks = new Knacks();
+  // experience: Experience = new Experience();
+  // defense: Defense = new Defense();
+  // health: Health = new Health();
+  // skills: Skill[] = [];
+  // advantages: Advantage[] = [];
+  // endeavorDice: number = 1;
+  // aspect: Aspect = new Aspect();
+  // weapons: Weapon[] = [];
 }
