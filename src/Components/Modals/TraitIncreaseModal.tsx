@@ -50,13 +50,13 @@ const TraitIncreaseModal: React.FC<TraitIncreaseModalProps> = ({
   const handleSubmit = () => {
     if (selectedCharacter && selectedTrait && archetypeWithRankZero) {
       // Update the archetype's bonusTrait
-      const updatedCharacter = { ...selectedCharacter };
+      // const updatedCharacter = { ...selectedCharacter };
 
       // Set the selected trait to the bonusTrait
       selectedCharacter.bonusTrait = selectedTrait;
 
       // Update the character after modifying the archetype
-      updateCharacter(updatedCharacter);
+      updateCharacter(selectedCharacter);
       onClose(); // Close the modal after updating
     }
   };

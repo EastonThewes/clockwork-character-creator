@@ -89,20 +89,27 @@ export enum ArcheTypeLevels {
 }
 export interface CharacterArchetype {
   archetype: Archetype; // The archetype information
-  selectedStyle: string; // The selected style index
+  selectedStyle?: string; // The selected style
+  invocations?: Invocation[];
   level: ArcheTypeLevels; // This is what level this archetype is at when it was chosen
   rank: number; // This is the rank at which this archetype was chosen
   type: string; // If this archetype was given by a rank or an advantage
 }
 
-export interface TraitBonuses {}
+export interface Invocation {
+  name: string;
+  actionCost: string | number;
+  description: string;
+}
 
 export class Character {
+  id: string = "";
   name: string = "New Character"; // The name of the character
   rank: number = 0; // The current rank of the character
 
   archetypes: CharacterArchetype[] = []; // This is the list of archetypes and how they were chosen
   bonusTrait: string = ""; // This is the chosen bonus trait
+  disadvantageTrait: string = ""; // This is the trait you make go down by 1
 
   // traits: Traits = new Traits();                        // The list of traits
   // archetypeTraitModifiers: TraitModifiers[] = [];

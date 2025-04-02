@@ -42,6 +42,7 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
 
       if (archetypeWithRankZero)
         archetypeWithRankZero.selectedStyle = selectedStyle;
+
       updateCharacter(updatedCharacter);
       onClose(); // Close the modal after updating
     }
@@ -74,6 +75,7 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
         {/* Modal Container */}
         <Grid
           container
+          size={8}
           sx={{
             backgroundColor: "white",
             borderRadius: 2,
@@ -136,10 +138,31 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
           <Grid size={12} mb={2}>
             {selectedStyle && (
               <Box>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="h6" color="text.primary">
+                  Initiate
+                </Typography>
+                <Typography variant="body2" color="text.primary">
                   {
                     styles.find((style) => style.name === selectedStyle)
-                      ?.description
+                      ?.initiate.description
+                  }
+                </Typography>
+                <Typography variant="h6" color="text.primary">
+                  Adept
+                </Typography>
+                <Typography variant="body2" color="text.primary">
+                  {
+                    styles.find((style) => style.name === selectedStyle)?.adept
+                      .description
+                  }
+                </Typography>
+                <Typography variant="h6" color="text.primary">
+                  Master
+                </Typography>
+                <Typography variant="body2" color="text.primary">
+                  {
+                    styles.find((style) => style.name === selectedStyle)?.master
+                      .description
                   }
                 </Typography>
               </Box>

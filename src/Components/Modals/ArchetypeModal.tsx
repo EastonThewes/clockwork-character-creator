@@ -63,6 +63,11 @@ const ArchetypeModal: React.FC<ArchetypeModalProps> = ({
       if (existingArchetypeIndex !== -1) {
         // Replace the existing archetype if one with the same rank is found
         selectedCharacter.archetypes[existingArchetypeIndex] = newArchetype;
+
+        // If this is the initial archetype, reset the bonus trait
+        if (rank === 0) {
+          selectedCharacter.bonusTrait = "";
+        }
       } else {
         // Otherwise, push the new archetype into the array
         selectedCharacter.archetypes.push(newArchetype);

@@ -5,6 +5,7 @@ import ArchetypeModal from "./Modals/ArchetypeModal";
 import { Character, Traits } from "../Models/Character";
 import TraitIncreaseModal from "./Modals/TraitIncreaseModal"; // Import the TraitIncreaseModal
 import StyleSelectionModal from "./Modals/StyleSelectionModal";
+import DisadvantageTraitModal from "./Modals/DisadvantageTraitModal";
 
 interface CharacterBuilderStepsProps {
   character: Character; // Accepting a character as a prop
@@ -102,18 +103,60 @@ const StyleStep = () => {
   );
 };
 
+const DisadvantageStep = () => {
+  const { selectedCharacter } = useCharacterContext();
+  const [openDisadvantageTraitModal, setOpenDisadvantageTraitModal] =
+    useState(false);
+
+  const handleOpenDisadvantageTraitModal = () =>
+    setOpenDisadvantageTraitModal(true);
+  const handleCloseDisadvantageTraitModal = () =>
+    setOpenDisadvantageTraitModal(false);
+
+  let initialArchetype = selectedCharacter?.archetypes?.find(
+    (archetype) => archetype.rank === 0
+  );
+
+  // Check if the archetype type is 'martial'
+  if (initialArchetype?.type !== "martial") {
+    return null; // Don't render the StyleStep if it's not 'martial'
+  }
+
+  return (
+    <div>
+      <Button
+        variant="contained"
+        onClick={handleOpenDisadvantageTraitModal}
+        fullWidth
+        sx={{ marginTop: 2 }}
+      >
+        Choose Trait to Decrease
+      </Button>
+
+      <DisadvantageTraitModal
+        open={openDisadvantageTraitModal}
+        onClose={handleCloseDisadvantageTraitModal}
+      />
+    </div>
+  );
+};
+
 const steps = [
   {
-    name: "Step 1: Choose Archetype",
+    name: "Choose Archetype",
     component: FirstStep,
   },
   {
-    name: "Step 2: Choose Bonus Trait",
+    name: "Choose Style",
+    component: StyleStep, // Add StyleStep here
+  },
+  {
+    name: "Choose Bonus Trait",
     component: TraitStep,
   },
   {
-    name: "Step 3: Choose Style",
-    component: StyleStep, // Add StyleStep here
+    name: "Choose Trait to Decrease",
+    component: DisadvantageStep,
   },
 ];
 
@@ -126,7 +169,7 @@ const CharacterBuilderSteps: React.FC<CharacterBuilderStepsProps> = () => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            height: 400, // Adjust the height to suit your design
+            // height: 400, // Adjust the height to suit your design
             overflowY: "auto", // Enable vertical scrolling
           }}
         >

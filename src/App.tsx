@@ -29,7 +29,7 @@ const App = () => {
   const handleCreateCharacter = () => {
     const newChar = new Character(); // Create new character
     addCharacter(newChar); // Add to context
-    setSelectedCharacter(newChar); // Set newly created character
+    // setSelectedCharacter(newChar); // Set newly created character
     setShowCharacterSheet(true); // Show character sheet
   };
 
