@@ -75,7 +75,7 @@ const StyleSelectionModal: React.FC<StyleSelectionModalProps> = ({
         {/* Modal Container */}
         <Grid
           container
-          size={8}
+          size={6}
           sx={{
             backgroundColor: "white",
             borderRadius: 2,

@@ -6,6 +6,7 @@ import { Character, Traits } from "../Models/Character";
 import TraitIncreaseModal from "./Modals/TraitIncreaseModal"; // Import the TraitIncreaseModal
 import StyleSelectionModal from "./Modals/StyleSelectionModal";
 import DisadvantageTraitModal from "./Modals/DisadvantageTraitModal";
+import InvocationSelectionModal from "./Modals/InvocationsSelectionModal";
 
 interface CharacterBuilderStepsProps {
   character: Character; // Accepting a character as a prop
@@ -78,10 +79,10 @@ const StyleStep = () => {
     (archetype) => archetype.rank === 0
   );
 
-  // Check if the archetype type is 'martial'
-  if (initialArchetype?.type !== "martial") {
-    return null; // Don't render the StyleStep if it's not 'martial'
-  }
+  // // Check if the archetype type is 'martial'
+  // if (initialArchetype?.type !== "martial") {
+  //   return null; // Don't render the StyleStep if it's not 'martial'
+  // }
 
   return (
     <div>
@@ -94,7 +95,7 @@ const StyleStep = () => {
         Choose Style
       </Button>
 
-      <StyleSelectionModal
+      <InvocationSelectionModal
         open={openStyleModal}
         onClose={handleCloseStyleModal}
         rank={0}
@@ -112,15 +113,6 @@ const DisadvantageStep = () => {
     setOpenDisadvantageTraitModal(true);
   const handleCloseDisadvantageTraitModal = () =>
     setOpenDisadvantageTraitModal(false);
-
-  let initialArchetype = selectedCharacter?.archetypes?.find(
-    (archetype) => archetype.rank === 0
-  );
-
-  // Check if the archetype type is 'martial'
-  if (initialArchetype?.type !== "martial") {
-    return null; // Don't render the StyleStep if it's not 'martial'
-  }
 
   return (
     <div>

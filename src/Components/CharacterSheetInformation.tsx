@@ -25,7 +25,7 @@ const CharacterSheetInformation: React.FC<
   }
 
   return (
-    <Card sx={{ margin: 2, padding: 2, maxWidth: 600 }}>
+    <Card sx={{ margin: 1, padding: 2, maxWidth: 600 }}>
       <CardContent>
         {/* Character Name */}
         <Typography variant="h5" gutterBottom>
